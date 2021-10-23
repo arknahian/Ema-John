@@ -1,0 +1,27 @@
+.product-name a {
+    text-decoration: none;
+}
+.product-name{
+    color: blue;
+    font-weight: 400;
+}
+
+.product-container{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    padding: 10px;
+    border-bottom: 1px solid grey;
+}
+
+.product-description {
+    margin-left: 2vw;
+}
+
+.product{
+    display: flex;
+}
+.stock{
+    color: #B12704;
+    font-weight: 500;
+}

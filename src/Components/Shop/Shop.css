@@ -1,0 +1,27 @@
+.product-exploring{
+    width: 70%;
+    margin: 0 auto;
+}
+main{
+    display: flex;
+    justify-content: space-around;
+}
+
+.order-summary{
+    border-left: 1px solid grey;
+    width: 20%;
+}
+
+.addBtn{
+    background-color: #ECB22E;
+    border: none;
+    width: 9vw;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.addBtn:hover{
+    background-color: #ebb027c7;
+}
