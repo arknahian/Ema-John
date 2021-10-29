@@ -1,8 +1,7 @@
-import { Link } from "react-router-dom";
 import "./Cart.css"
 const Cart = (props) => {
     const cart = props.totalOrder;
-    const total = cart.reduce((total, pd) => total + pd.price, 0);
+    const total = cart.reduce((sum, pd) => sum + pd.price * pd.quantity, 0);
     let shipping = 0;
     if (total === 0) {
         shipping = 0;
@@ -19,12 +18,14 @@ const Cart = (props) => {
         <div className="summary">
             <h1>Order Summary</h1>
             <h3 style={{fontWeight: '400'}}>Items Ordered: {cart.length}</h3>
-            <p>Items: ${total}</p>
+            <p>Items: ${total.toFixed(2)}</p>
             <p>Shipping and Handling: ${shipping}</p>
-            <p>Total Before Tax: ${total}</p>
+            <p>Total Before Tax: ${total.toFixed(2)}</p>
             <p>Estimated Tax: ${tax.toFixed(4)}</p>
             <p>Ordered Total: ${totalOrder.toFixed(4)}</p>
-            <Link to="/review"><button className="addBtn">Review Your Order</button></Link>
+           {
+               props.children
+           }
         </div>
     );
 };
