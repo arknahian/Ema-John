@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import firebaseConfig from "./Firebase.config";
+import { userContext } from "./../../App";
+import { useHistory, useLocation } from 'react-router';
 initializeApp(firebaseConfig);
 
 const Login = () => {
@@ -14,6 +16,12 @@ const Login = () => {
         photo : '',
         error : false,
     });
+
+    const history = useHistory();
+    const location = useLocation();
+    const {from} = location.state || {from: {pathname: '/'}}
+
+    const [loggedInUser, setLoggedInUser] = useContext(userContext);
 
     const [newUser, setNewUser] = useState(false);
 
@@ -39,6 +47,7 @@ const Login = () => {
                     name: displayName,
                     email: email,
                     photo: photoURL,
+                    error : false,
                 });
             }).catch((error) => {
                 const errorCode = error.code;
@@ -84,20 +93,19 @@ const Login = () => {
             signingUser[event.target.name] = event.target.value;
             signingUser.isSignedIn = true;
             setNewUserReg(signingUser)
-            console.log(newUserReg)
         }
         if (isValid === false) {
             const signingUser = {...newUserReg};
             signingUser[event.target.name] = `Invalid ${event.target.name}` ;
             signingUser.isSignedIn = true;
             signingUser.error = true;
-            setNewUserReg(signingUser)
-            console.log(newUserReg)
+            setNewUserReg(signingUser);
         }
     }
 
     const handleSignUp = (event) => {
         const {isSignedIn, name, email, password, error} = newUserReg;
+        console.log(loggedInUser)
         setUser({
             isSignedIn : isSignedIn,
             name : name,
@@ -108,16 +116,46 @@ const Login = () => {
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in 
-          const user = userCredential.user;
-          // ...
+          console.log(userCredential.user)
+          const createdUser = userCredential.user;
+          console.log(createdUser);
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          // ..
+          console.log("this is error", errorMessage, errorCode)
         });
         event.preventDefault()
     }
+
+    // user login
+    
+    const handleLogIn = (event) => {
+        const {email, password} = newUserReg;
+
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+        console.log("user signed in");
+        setLoggedInUser(newUserReg);
+        history.replace(from);
+        const loggingUser = userCredential.user;
+        setUser({
+            isSignedIn : true,
+            name : "Anonymous",
+            email: email,
+            error : false,
+            userLoggedIn : true
+        });
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setUser({
+        error : errorMessage
+    })
+  });
+event.preventDefault()
+}
     const {name, email, photo} = user;
 
 
@@ -159,11 +197,11 @@ const Login = () => {
                 <br />
             <input onBlur={validationCheck} type="email" placeholder="Type your Email" name="email"/>
                 <br />
-            <input type="password" name="password" id="" placeholder="Enter your password" />
+            <input onBlur={validationCheck} type="password" name="password" id="" placeholder="Enter your password" />
                 <br />
             {
                 newUser ? <input onClick={handleSignUp} type="submit" value="Sign Up" />
-                : <input type="submit" value="Log In" />
+                : <input onClick={handleLogIn} type="submit" value="Log In" />
             }
         </form>
                 </div>
