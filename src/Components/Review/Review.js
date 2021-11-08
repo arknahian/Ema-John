@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { getDatabaseCart, processOrder, removeFromDatabaseCart } from '../../utilities/databaseManager';
 import Cart from '../Cart/Cart';
 import fakeData from "./../../fakeData/index";
@@ -13,6 +13,7 @@ const Review = () => {
         setCart(newProduct)
         removeFromDatabaseCart(productKey)
     }
+    const history = useHistory();
     useEffect(() => {
         const savedCart = getDatabaseCart();
         const productKeys = Object.keys(savedCart);
@@ -25,10 +26,8 @@ const Review = () => {
         
     }, [])
     const [orderPlace, setOrderPlace] = useState(false);
-    const handleRemove = () => {
-        setCart([]);
-        setOrderPlace(true);
-        processOrder();
+    const handleProceed = () => {
+        history.push("/shipment")
     }
     let thankyou;
     if (orderPlace) {
@@ -47,7 +46,7 @@ const Review = () => {
             }
         <div className="order-summary">
             <Cart totalOrder={cart}>
-            <button onClick={handleRemove} className="addBtn">Place Order</button>
+            <button onClick={handleProceed} className="addBtn">Proceed Order</button>
             </Cart>
         </div>
     </main>
